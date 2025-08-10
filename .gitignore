@@ -1,0 +1,16 @@
+# Ignore file environment
+.env
+
+# Ignore file config berisi token atau API key
+config.json
+
+# Ignore node modules
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
