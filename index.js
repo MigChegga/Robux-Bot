@@ -210,3 +210,14 @@ client.on('interactionCreate', async (interaction) => {
 
 client.login(TOKEN);
 
+// ==== HTTP KEEPALIVE ====
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Bot is running!');
+});
+
+app.listen(3000, () => {
+  console.log('HTTP server listening on port 3000');
+})
