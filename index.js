@@ -16,6 +16,7 @@ const {
   EmbedBuilder,
   ChannelType
 } = require('discord.js');
+const express = require('express');
 
 // ==== KONFIGURASI ====
 const TOKEN = process.env.TOKEN;
@@ -36,24 +37,14 @@ const client = new Client({
   partials: [Partials.Channel]
 });
 
+// ====== Logging & Error Handling ======
+client.on("error", (err) => console.error("❌ Client error:", err));
+client.on("shardError", (err) => console.error("❌ Shard error:", err));
+client.on("debug", (info) => console.log("🐛 DEBUG:", info));
+
+// ====== Ready Event ======
 client.once('ready', async () => {
   console.log(`✅ Bot login sebagai ${client.user.tag}`);
-
-client.on("error", (err) => {
-  console.error("❌ Client error:", err);
-});
-
-client.on("shardError", (err) => {
-  console.error("❌ Shard error:", err);
-});
-
-client.on("debug", (info) => {
-  console.log("🐛 DEBUG:", info);
-});
-
-client.login(process.env.TOKEN)
-  .then(() => console.log("Login attempt selesai"))
-  .catch(err => console.error("❌ Login gagal:", err));
 
   try {
     const guild = await client.guilds.fetch(GUILD_ID);
@@ -144,7 +135,7 @@ client.on('interactionCreate', async (interaction) => {
     return interaction.showModal(modal);
   }
 
-  // Tombol tutup ticket (log dikirim di sini)
+  // Tombol tutup ticket
   if (interaction.isButton() && interaction.customId === 'close_ticket') {
     if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
       return interaction.reply({ content: '❌ Hanya admin yang bisa menutup ticket ini.', ephemeral: true });
@@ -180,7 +171,7 @@ client.on('interactionCreate', async (interaction) => {
     return;
   }
 
-  // Modal submit (buat ticket tapi tanpa log)
+  // Modal submit
   if (interaction.isModalSubmit() && interaction.customId === 'ticket_form') {
     const nominal = interaction.fields.getTextInputValue('nominal_robux');
     const jenis = interaction.fields.getTextInputValue('jenis_robux');
@@ -226,26 +217,15 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 // ==== LOGIN DISCORD ====
-console.log("TOKEN:", process.env.TOKEN ? "ADA ✅" : "KOSONG ❌");
+console.log("TOKEN:", TOKEN ? "ADA ✅" : "KOSONG ❌");
 console.log("TOKEN LENGTH:", TOKEN?.length);
 
 client.login(TOKEN)
-  .then(() => {
-    console.log("Login sukses, menunggu ready event...");
-  })
-  .catch(err => {
-    console.error("❌ Login error:", err);
-  });
+  .then(() => console.log("Login attempt selesai"))
+  .catch(err => console.error("❌ Login error:", err));
 
 // ==== HTTP KEEPALIVE ====
-const express = require('express');
 const app = express();
-
-app.get('/', (req, res) => {
-  res.send('Bot is running!');
-});
-
+app.get('/', (req, res) => res.send('Bot is running!'));
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`HTTP server listening on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`HTTP server listening on port ${PORT}`));
