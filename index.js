@@ -2,8 +2,6 @@
 process.on('unhandledRejection', console.error);
 process.on('uncaughtException', console.error);
 
-require('dotenv').config(); // tambahkan di paling atas file index.js
-
 const express = require('express');
 const { 
   Client, 
