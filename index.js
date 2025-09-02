@@ -2,27 +2,26 @@
 process.on('unhandledRejection', console.error);
 process.on('uncaughtException', console.error);
 
-const express = require('express');
-const { 
-  Client, 
-  GatewayIntentBits, 
-  Partials, 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
-  PermissionsBitField, 
-  ModalBuilder, 
-  TextInputBuilder, 
+const {
+  Client,
+  GatewayIntentBits,
+  Partials,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  PermissionsBitField,
+  ModalBuilder,
+  TextInputBuilder,
   TextInputStyle,
   EmbedBuilder,
   ChannelType
 } = require('discord.js');
 
 // ==== KONFIGURASI ====
-const TOKEN = process.env.TOKEN 
+const TOKEN = process.env.TOKEN;
 const GUILD_ID = '1375992174117781625'; // ID server
 const LOG_CHANNEL_ID = '1402566633607925843'; // ID channel log
-const CATEGORY_ID = '1378848556487671881'; // ganti ID category Transaksi
+const CATEGORY_ID = '1378848556487671881'; // ID category Transaksi
 // =====================
 
 // Penyimpanan sementara data ticket
@@ -210,7 +209,7 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-
+// ==== LOGIN DISCORD ====
 console.log("TOKEN:", process.env.TOKEN ? "ADA ✅" : "KOSONG ❌");
 console.log("TOKEN LENGTH:", TOKEN?.length);
 
@@ -222,3 +221,15 @@ client.login(TOKEN)
     console.error("❌ Login error:", err);
   });
 
+// ==== HTTP KEEPALIVE ====
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Bot is running!');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`HTTP server listening on port ${PORT}`);
+});
