@@ -1,6 +1,6 @@
 // index.js
-process.on('unhandledRejection', console.error);
-process.on('uncaughtException', console.error);
+process.on("unhandledRejection", console.error);
+process.on("uncaughtException", console.error);
 
 const {
   Client,
@@ -14,27 +14,28 @@ const {
   TextInputBuilder,
   TextInputStyle,
   EmbedBuilder,
-  ChannelType
-} = require('discord.js');
-const express = require('express');
+  ChannelType,
+} = require("discord.js");
+const express = require("express");
 
 // ==== KONFIGURASI ====
 const TOKEN = process.env.TOKEN;
-const GUILD_ID = '1375992174117781625'; // ID server
-const LOG_CHANNEL_ID = '1402566633607925843'; // ID channel log
-const CATEGORY_ID = '1378848556487671881'; // ID category Transaksi
+const GUILD_ID = "1375992174117781625"; // ID server
+const LOG_CHANNEL_ID = "1402566633607925843"; // ID channel log
+const CATEGORY_ID = "1378848556487671881"; // ID category Transaksi
 // =====================
 
 // Penyimpanan sementara data ticket
 const ticketData = new Map();
 
+// ==== INIT CLIENT ====
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
+    GatewayIntentBits.MessageContent,
   ],
-  partials: [Partials.Channel]
+  partials: [Partials.Channel],
 });
 
 // ====== Logging & Error Handling ======
@@ -43,47 +44,49 @@ client.on("shardError", (err) => console.error("❌ Shard error:", err));
 client.on("debug", (info) => console.log("🐛 DEBUG:", info));
 
 // ====== Ready Event ======
-client.once('ready', async () => {
-  console.log(`✅ Bot login sebagai ${client.user.tag}`);
+client.once("ready", async () => {
+  console.log(`🚀 Bot berhasil online sebagai ${client.user.tag}`);
 
   try {
     const guild = await client.guilds.fetch(GUILD_ID);
     await guild.commands.create({
-      name: 'calculate',
-      description: 'Hitung jumlah Robux dari harga (IDR)',
+      name: "calculate",
+      description: "Hitung jumlah Robux dari harga (IDR)",
       options: [
         {
-          name: 'harga',
-          description: 'Masukkan jumlah uang dalam IDR',
+          name: "harga",
+          description: "Masukkan jumlah uang dalam IDR",
           type: 4,
-          required: true
-        }
-      ]
+          required: true,
+        },
+      ],
     });
-    console.log('✅ Slash command /calculate terdaftar.');
+    console.log("✅ Slash command /calculate terdaftar.");
   } catch (err) {
-    console.error('❌ Gagal mendaftar slash command:', err);
+    console.error("❌ Gagal mendaftar slash command:", err);
   }
 });
 
 // ====== Ticket Panel ======
-client.on('messageCreate', async (message) => {
-  if (message.content === '!ticketpanel') {
+client.on("messageCreate", async (message) => {
+  if (message.content === "!ticketpanel") {
     const embed = new EmbedBuilder()
-      .setTitle('Ticket Pembelian Robux')
+      .setTitle("Ticket Pembelian Robux")
       .setDescription(
-        'Ingin membeli Robux? Klik tombol di bawah dan isi form.\n' +
-        'Nominal = contoh: 100  •  Jenis = contoh: after tax\n\n' +
-        'Untuk tutorial cara membuat gamepass dan perbedaan before tax / after tax ada di <#1402932755507056711>'
+        "Ingin membeli Robux? Klik tombol di bawah dan isi form.\n" +
+          "Nominal = contoh: 100  •  Jenis = contoh: after tax\n\n" +
+          "Untuk tutorial cara membuat gamepass dan perbedaan before tax / after tax ada di <#1402932755507056711>"
       )
-      .setColor('#ff8058')
-      .setImage('https://i.imgur.com/PqFWyjk.jpeg')
-      .setFooter({ text: 'Support Bot • Isi form dengan data yang benar' });
+      .setColor("#ff8058")
+      .setImage("https://i.imgur.com/PqFWyjk.jpeg")
+      .setFooter({
+        text: "Support Bot • Isi form dengan data yang benar",
+      });
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId('open_ticket')
-        .setLabel('🎫 Buat Ticket')
+        .setCustomId("open_ticket")
+        .setLabel("🎫 Buat Ticket")
         .setStyle(ButtonStyle.Primary)
     );
 
@@ -92,11 +95,11 @@ client.on('messageCreate', async (message) => {
 });
 
 // ====== Interaction Handler ======
-client.on('interactionCreate', async (interaction) => {
+client.on("interactionCreate", async (interaction) => {
   // Slash command /calculate
   if (interaction.isChatInputCommand()) {
-    if (interaction.commandName === 'calculate') {
-      const harga = interaction.options.getInteger('harga');
+    if (interaction.commandName === "calculate") {
+      const harga = interaction.options.getInteger("harga");
       const hargaPerRobux = 75;
       const jumlahRobux = Math.floor(harga / hargaPerRobux);
 
@@ -108,23 +111,23 @@ client.on('interactionCreate', async (interaction) => {
   }
 
   // Tombol buka ticket
-  if (interaction.isButton() && interaction.customId === 'open_ticket') {
+  if (interaction.isButton() && interaction.customId === "open_ticket") {
     const modal = new ModalBuilder()
-      .setCustomId('ticket_form')
-      .setTitle('Form / Data Pembelian');
+      .setCustomId("ticket_form")
+      .setTitle("Form / Data Pembelian");
 
     const nominalInput = new TextInputBuilder()
-      .setCustomId('nominal_robux')
-      .setLabel('Nominal Robux')
+      .setCustomId("nominal_robux")
+      .setLabel("Nominal Robux")
       .setStyle(TextInputStyle.Short)
-      .setPlaceholder('Contoh: 100')
+      .setPlaceholder("Contoh: 100")
       .setRequired(true);
 
     const jenisInput = new TextInputBuilder()
-      .setCustomId('jenis_robux')
-      .setLabel('Jenis Robux')
+      .setCustomId("jenis_robux")
+      .setLabel("Jenis Robux")
       .setStyle(TextInputStyle.Short)
-      .setPlaceholder('Contoh: after tax')
+      .setPlaceholder("Contoh: after tax")
       .setRequired(true);
 
     modal.addComponents(
@@ -136,32 +139,46 @@ client.on('interactionCreate', async (interaction) => {
   }
 
   // Tombol tutup ticket
-  if (interaction.isButton() && interaction.customId === 'close_ticket') {
-    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
-      return interaction.reply({ content: '❌ Hanya admin yang bisa menutup ticket ini.', ephemeral: true });
+  if (interaction.isButton() && interaction.customId === "close_ticket") {
+    if (
+      !interaction.member.permissions.has(
+        PermissionsBitField.Flags.ManageChannels
+      )
+    ) {
+      return interaction.reply({
+        content: "❌ Hanya admin yang bisa menutup ticket ini.",
+        ephemeral: true,
+      });
     }
 
     const data = ticketData.get(interaction.channel.id) || {};
     const closeEmbed = new EmbedBuilder()
-      .setTitle('📤 Ticket Ditutup')
+      .setTitle("📤 Ticket Ditutup")
       .addFields(
-        { name: 'User', value: data.userId ? `<@${data.userId}>` : 'Unknown', inline: true },
-        { name: 'Nominal Robux', value: data.nominal || '-', inline: true },
-        { name: 'Jenis Robux', value: data.jenis || '-', inline: true },
-        { name: 'Channel', value: `${interaction.channel.name}`, inline: true },
-        { name: 'Ditutup oleh', value: `<@${interaction.user.id}>`, inline: true }
+        {
+          name: "User",
+          value: data.userId ? `<@${data.userId}>` : "Unknown",
+          inline: true,
+        },
+        { name: "Nominal Robux", value: data.nominal || "-", inline: true },
+        { name: "Jenis Robux", value: data.jenis || "-", inline: true },
+        { name: "Channel", value: `${interaction.channel.name}`, inline: true },
+        { name: "Ditutup oleh", value: `<@${interaction.user.id}>`, inline: true }
       )
-      .setColor('#ff8058')
+      .setColor("#ff8058")
       .setTimestamp();
 
     try {
       const logChannel = await interaction.guild.channels.fetch(LOG_CHANNEL_ID);
       if (logChannel) await logChannel.send({ embeds: [closeEmbed] });
     } catch (err) {
-      console.error('Gagal mengirim log:', err);
+      console.error("Gagal mengirim log:", err);
     }
 
-    await interaction.reply({ content: '🔒 Ticket ditutup. Menghapus channel...', ephemeral: true });
+    await interaction.reply({
+      content: "🔒 Ticket ditutup. Menghapus channel...",
+      ephemeral: true,
+    });
 
     ticketData.delete(interaction.channel.id);
     setTimeout(() => {
@@ -172,47 +189,61 @@ client.on('interactionCreate', async (interaction) => {
   }
 
   // Modal submit
-  if (interaction.isModalSubmit() && interaction.customId === 'ticket_form') {
-    const nominal = interaction.fields.getTextInputValue('nominal_robux');
-    const jenis = interaction.fields.getTextInputValue('jenis_robux');
+  if (interaction.isModalSubmit() && interaction.customId === "ticket_form") {
+    const nominal = interaction.fields.getTextInputValue("nominal_robux");
+    const jenis = interaction.fields.getTextInputValue("jenis_robux");
 
     const ticketChannel = await interaction.guild.channels.create({
       name: `ticket-${interaction.user.username}`,
       type: ChannelType.GuildText,
       parent: CATEGORY_ID,
       permissionOverwrites: [
-        { id: interaction.guild.id, deny: [PermissionsBitField.Flags.ViewChannel] },
-        { id: interaction.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] }
-      ]
+        {
+          id: interaction.guild.id,
+          deny: [PermissionsBitField.Flags.ViewChannel],
+        },
+        {
+          id: interaction.user.id,
+          allow: [
+            PermissionsBitField.Flags.ViewChannel,
+            PermissionsBitField.Flags.SendMessages,
+          ],
+        },
+      ],
     });
 
     ticketData.set(ticketChannel.id, {
       userId: interaction.user.id,
       nominal,
       jenis,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     });
 
     const ticketEmbed = new EmbedBuilder()
-      .setTitle('📩 Ticket Dibuka')
-      .setDescription('Silakan jelaskan detail tambahan jika perlu. Admin akan merespon secepatnya.')
-      .addFields(
-        { name: 'User', value: `<@${interaction.user.id}>`, inline: true },
-        { name: 'Nominal Robux', value: `${nominal}`, inline: true },
-        { name: 'Jenis Robux', value: `${jenis}`, inline: true }
+      .setTitle("📩 Ticket Dibuka")
+      .setDescription(
+        "Silakan jelaskan detail tambahan jika perlu. Admin akan merespon secepatnya."
       )
-      .setColor('#ff8058')
+      .addFields(
+        { name: "User", value: `<@${interaction.user.id}>`, inline: true },
+        { name: "Nominal Robux", value: `${nominal}`, inline: true },
+        { name: "Jenis Robux", value: `${jenis}`, inline: true }
+      )
+      .setColor("#ff8058")
       .setTimestamp();
 
     const closeRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId('close_ticket')
-        .setLabel('🔒 Close Ticket')
+        .setCustomId("close_ticket")
+        .setLabel("🔒 Close Ticket")
         .setStyle(ButtonStyle.Danger)
     );
 
     await ticketChannel.send({ embeds: [ticketEmbed], components: [closeRow] });
-    await interaction.reply({ content: `✅ Ticket dibuat: ${ticketChannel}`, ephemeral: true });
+    await interaction.reply({
+      content: `✅ Ticket dibuat: ${ticketChannel}`,
+      ephemeral: true,
+    });
   }
 });
 
@@ -220,12 +251,15 @@ client.on('interactionCreate', async (interaction) => {
 console.log("TOKEN:", TOKEN ? "ADA ✅" : "KOSONG ❌");
 console.log("TOKEN LENGTH:", TOKEN?.length);
 
-client.login(TOKEN)
-  .then(() => console.log("Login attempt selesai"))
-  .catch(err => console.error("❌ Login error:", err));
+client
+  .login(TOKEN)
+  .then(() => console.log("✅ Login request dikirim ke Discord..."))
+  .catch((err) => console.error("❌ Login error:", err));
 
 // ==== HTTP KEEPALIVE ====
 const app = express();
-app.get('/', (req, res) => res.send('Bot is running!'));
+app.get("/", (req, res) => res.send("Bot is running!"));
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`HTTP server listening on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🌐 HTTP server listening on port ${PORT}`)
+);
