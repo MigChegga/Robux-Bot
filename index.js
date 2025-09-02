@@ -210,11 +210,8 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-console.log("TOKEN:", process.env.TOKEN ? "ADA ✅" : "KOSONG ❌");
-client.login(TOKEN).catch(err => {
-  console.error("Login error:", err);
-});
 
+console.log("TOKEN:", process.env.TOKEN ? "ADA ✅" : "KOSONG ❌");
 console.log("TOKEN LENGTH:", TOKEN?.length);
 
 client.login(TOKEN)
