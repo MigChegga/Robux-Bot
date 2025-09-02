@@ -222,7 +222,7 @@ client.login(TOKEN).then(() => {
   console.error("❌ Login error:", err);
 });
 
-client.login(TOKEN).
+client.login(TOKEN)
 
 
 // ==== HTTP KEEPALIVE ====
