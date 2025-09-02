@@ -215,7 +215,6 @@ client.on('interactionCreate', async (interaction) => {
 client.login(TOKEN);
 
 // ==== HTTP KEEPALIVE ====
-const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
