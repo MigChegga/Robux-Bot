@@ -39,6 +39,22 @@ const client = new Client({
 client.once('ready', async () => {
   console.log(`✅ Bot login sebagai ${client.user.tag}`);
 
+client.on("error", (err) => {
+  console.error("❌ Client error:", err);
+});
+
+client.on("shardError", (err) => {
+  console.error("❌ Shard error:", err);
+});
+
+client.on("debug", (info) => {
+  console.log("🐛 DEBUG:", info);
+});
+
+client.login(process.env.TOKEN)
+  .then(() => console.log("Login attempt selesai"))
+  .catch(err => console.error("❌ Login gagal:", err));
+
   try {
     const guild = await client.guilds.fetch(GUILD_ID);
     await guild.commands.create({
