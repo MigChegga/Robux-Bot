@@ -210,6 +210,11 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
+console.log("TOKEN:", process.env.TOKEN ? "ADA ✅" : "KOSONG ❌");
+client.login(TOKEN).catch(err => {
+  console.error("Login error:", err);
+});
+
 client.login(TOKEN);
 
 // ==== HTTP KEEPALIVE ====
