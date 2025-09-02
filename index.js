@@ -215,7 +215,12 @@ client.login(TOKEN).catch(err => {
   console.error("Login error:", err);
 });
 
-client.login(TOKEN);
+client.login(TOKEN).then(() => {
+  console.log("Login sukses, menunggu ready event...");
+}).catch(err => {
+  console.error("Login error:", err);
+});
+
 
 // ==== HTTP KEEPALIVE ====
 const app = express();
